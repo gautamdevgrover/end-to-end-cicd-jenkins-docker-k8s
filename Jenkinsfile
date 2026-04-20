@@ -37,8 +37,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                kubectl set image deployment/node-app-deployment \
-                node-app=$DOCKER_IMAGE:v2
+                kubectl set image deployment/node-cicd \
+                node-cicd-app=$DOCKER_IMAGE:v2
                 '''
             }
         }
