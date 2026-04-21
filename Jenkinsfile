@@ -44,7 +44,7 @@ pipeline {
         }
         stage('Restart Port Forward') {
             steps {
-                sh 'sudo systemctl restart kubectl-portforward.service'
+                sh 'sleep 25 && sudo systemctl restart kubectl-portforward.service'
             }
         }
     }
