@@ -39,6 +39,7 @@ pipeline {
                 sh '''
                 kubectl set -n frontend image deployment/node-cicd-deploy \
                 node-cicd-app=$DOCKER_IMAGE
+                sudo systemctl restart kubectl-portforward.service 
                 '''
             }
         }
