@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "gautamdevgrover/node-cicd-app"
+        DOCKER_IMAGE = "gautamdevgrover/node-cicd-app:${BUILD_NUMBER}"
     }
 
     stages {
@@ -15,7 +15,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE:v2 .'
+                sh 'docker build -t $DOCKER_IMAGE .'
             }
         }
 
@@ -28,7 +28,7 @@ pipeline {
 
                     sh '''
                     echo $PASS | docker login -u $USER --password-stdin
-                    docker push $DOCKER_IMAGE:v2
+                    docker push $DOCKER_IMAGE
                     '''
                 }
             }
@@ -38,7 +38,7 @@ pipeline {
             steps {
                 sh '''
                 kubectl set image deployment/node-cicd \
-                node-cicd-app=$DOCKER_IMAGE:v2
+                node-cicd-app=$DOCKER_IMAGE
                 '''
             }
         }
