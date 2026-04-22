@@ -4,7 +4,7 @@ const app = express();
 const PORT = 3000;
 
 app.get('/', (req, res) => {
-  res.send("New Current Time 14:55551 is: " + new Date().toString());
+  res.send("Current Time: " + new Date().toString());
 });
 
 app.get('/health', (req, res) => {
