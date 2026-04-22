@@ -20,8 +20,11 @@ pipeline {
                  sleep 3
                  docker build -t test-app .
                  docker run --rm --name test -d -p 3001:3000 test-app
-                 sleep 5
-                 curl -f http://localhost:3001/health
+                 for i in {1..10}; do
+                   curl -f http://localhost:3001/health && break
+                   echo "Waiting for app..."
+                   sleep 2
+                 done
                  docker stop test --signal KILL || true
                  '''
                }
@@ -43,6 +46,7 @@ pipeline {
                     sh '''
                     echo $PASS | docker login -u $USER --password-stdin
                     docker push $DOCKER_IMAGE
+                    docker logout
                     '''
                 }
             }
@@ -53,7 +57,7 @@ pipeline {
                 sh '''
                 kubectl set -n frontend image deployment/node-cicd-deploy \
                 node-cicd-app=$DOCKER_IMAGE
-                kubectl rollout status deployment/node-cicd-deploy -n frontend
+                kubectl rollout status deployment/node-cicd-deploy -n frontend --timeout=60s
                 '''
             }
         }
