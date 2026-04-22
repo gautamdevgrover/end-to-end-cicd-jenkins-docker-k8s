@@ -12,6 +12,17 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/gautamdevgrover/Project1.git'
             }
         }
+        stage('Test') {
+             steps {
+              sh '''
+                 docker build -t test-app .
+                 docker run --rm --name test -d -p 3001:3000 test-app
+                 sleep 5
+                 curl -f http://localhost:3001/health
+                 docker stop test --signal KILL 
+                 '''
+               }
+             }
 
         stage('Build Docker Image') {
             steps {
