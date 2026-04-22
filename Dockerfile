@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy package files
 COPY . .
 
+ENV TZ=Asia/Kolkata
+
 # Install dependencies
 RUN npm install
 
