@@ -7,7 +7,7 @@ app.get('/', (req, res) => {
   res.send('time is 11:57');
 });
 
-app.get('/health', (req, res) => {
+app.get('/healthz', (req, res) => {
   res.status(200).send('OK');
 });
 
