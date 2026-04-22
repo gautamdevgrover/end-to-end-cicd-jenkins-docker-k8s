@@ -66,14 +66,15 @@ GitHub → Jenkins → Docker Build → Docker Push → Kubernetes Deploy
 ## 📂 Project Structure
 
 ```text
-Project1/
- ├── app/
+end-to-end-cicd-jenkins-docker-k8s/
  ├── Dockerfile
  ├── Jenkinsfile
- ├── k8s/
- │    ├── deployment.yaml
- │    ├── service.yaml
- └── README.md
+ ├── README.md
+ ├── app.js
+ ├── deployment.yaml
+ ├── package-lock.json
+ ├── package.json
+ └── test.js
 ```
 
 ---
@@ -99,8 +100,8 @@ Project1/
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/Project1.git
-cd Project1
+git clone https://github.com/your-username/end-to-end-cicd-jenkins-docker-k8s.git
+cd end-to-end-cicd-jenkins-docker-k8s/
 ```
 
 ---
