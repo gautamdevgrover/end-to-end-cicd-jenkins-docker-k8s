@@ -15,6 +15,7 @@ pipeline {
         stage('Test') {
              steps {
               sh '''
+                 docker stop test --signal KILL
                  docker build -t test-app .
                  docker run --rm --name test -d -p 3001:3000 test-app
                  sleep 5
