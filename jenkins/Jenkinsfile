@@ -75,28 +75,26 @@ pipeline {
         }
         stage('Deploy using Helm') {
             steps {
-             script {
-             try {
-                sh '''
-                helm -n frontend upgrade --install node-app kubernetes/node-app-chart --create-namespace \
-                --set image.tag=$BUILD_NUMBER \
-                --timeout 60s
-                '''
-            } catch (Exception e) {
-                echo "Helm deploy failed! Rolling back..."
+                script {
+                    try {
+                        sh '''
+                        helm -n frontend upgrade --install node-app kubernetes/node-app-chart --create-namespace \
+                        --set image.tag=$BUILD_NUMBER \
+                        --timeout 60s
+                        '''
+                    } catch (Exception e) {
+                        echo "Helm deploy failed! Rolling back..."
 
-                sh '''
-                helm rollback node-app -n frontend
-                '''
+                        sh '''
+                        helm rollback node-app -n frontend
+                        '''
 
-                error("Deployment failed and rolled back")
+                        error("Deployment failed and rolled back")
+                    }
+                }
             }
         }
     }
-}
-            
-  }
-
   post {
     success {
         emailext (
