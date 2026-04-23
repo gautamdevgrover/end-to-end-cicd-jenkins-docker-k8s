@@ -2,40 +2,39 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "gautamdevgrover/node-cicd-app:${BUILD_NUMBER}"
+        DOCKER_IMAGE = "gautamdevgrover/node-cicd-app"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
 
-        stage('Clone Code') {
+        stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/gautamdevgrover/Project1.git'
             }
         }
-        stage('Test') {
-             steps {
-              sh '''
-                 docker stop test --signal KILL || true
-                 docker rm test || true
-                 sleep 3
-                 docker build -t test-app -f docker/Dockerfile .
-                 docker run --rm --name test -d -p 3001:3000 test-app
-                 for i in {1..10}; do
+        
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $DOCKER_IMAGE:$IMAGE_TAG -f docker/Dockerfile . '
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh """
+                docker stop test --signal KILL || true
+                docker rm test || true
+                sleep 3
+                docker run --rm $DOCKER_NAME:$IMAGE_TAG --name test -p 3001:3000
+                for i in {1..10}; do
                    curl -f http://localhost:3001/health && break
                    echo "Waiting for app..."
                    sleep 2
                  done
                  docker stop test --signal KILL || true
-                 '''
-               }
-             }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $DOCKER_IMAGE -f docker/Dockerfile . '
+                """
             }
         }
-
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
