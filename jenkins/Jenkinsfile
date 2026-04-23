@@ -78,7 +78,7 @@ pipeline {
              script {
              try {
                 sh '''
-                helm -n frontend upgrade --install node-app kubernetes/node-app-chart \
+                helm -n frontend upgrade --install node-app kubernetes/node-app-chart --create-namespace \
                 --set image.tag=$BUILD_NUMBER \
                 --timeout 60s
                 '''
