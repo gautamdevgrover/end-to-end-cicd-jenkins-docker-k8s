@@ -5,6 +5,7 @@ metadata:
     app: node-cicd-deploy
   name: node-cicd-deploy
 spec:
+  progressDeadlineSeconds: 60
   replicas: 2
   selector:
     matchLabels:

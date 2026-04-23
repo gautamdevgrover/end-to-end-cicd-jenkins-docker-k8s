@@ -75,26 +75,36 @@ pipeline {
         }
 
         stage('Deploy using Helm') {
-            steps {
-                script {
-                    try {
-                        sh '''
-                        helm -n frontend upgrade --install node-app kubernetes/node-app-chart --create-namespace \
-                        --set image.tag=090 \
-                        --timeout 60s --atomic
-                        '''
-                    } catch (Exception e) {
-                        echo "Helm deploy failed! Rolling back..."
+    steps {
+        script {
+            try {
+                sh '''
+                helm -n frontend upgrade --install node-app kubernetes/node-app-chart \
+                --create-namespace \
+                --set image.tag=$BUILD_NUMBER \
+                --timeout 60s \
+                --atomic
+                '''
 
-                        sh '''
-                        helm rollback node-app -n frontend
-                        '''
+                echo "Checking pod health..."
 
-                        error("Deployment failed and rolled back")
-                    }
-                }
+                sh '''
+                kubectl wait --for=condition=available deployment/node-cicd-deploy \
+                -n frontend --timeout=60s
+                '''
+
+            } catch (Exception e) {
+                echo "Deployment failed! Rolling back..."
+
+                sh '''
+                helm rollback node-app -n frontend
+                '''
+
+                error("Deployment failed and rolled back")
             }
         }
+    }
+}
     }
 
     post {
