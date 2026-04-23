@@ -124,6 +124,37 @@ gautamdevgrover/node-cicd-app:latest
 ```
 Developer → GitHub → Jenkins → Docker → Kubernetes → Users
 ```
+---
+
+📁 Project Structure
+node-app
+├── README.md
+├── app
+│   ├── app.js
+│   ├── package-lock.json
+│   ├── package.json
+│   └── public
+│       ├── index.html
+│       └── style.css
+├── docker
+│   └── Dockerfile
+├── jenkins
+│   └── Jenkinsfile
+├── kubernetes
+│   ├── deployment.yaml
+│   └── service.yaml
+└── tests
+    └── test.js
+📌 Directory Breakdown
+app/ → Node.js application source code
+docker/ → Dockerfile for building container image
+jenkins/ → Jenkins pipeline definition (CI/CD automation)
+kubernetes/ → Deployment & Service manifests
+tests/ → Basic test scripts for application validation
+🧠 Why This Structure?
+Keeps application, infrastructure, and pipeline separated and organized
+Makes the project scalable and easy to maintain
+Follows real-world DevOps project structure
 
 ---
 
