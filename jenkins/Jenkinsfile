@@ -89,8 +89,7 @@ pipeline {
                 echo "Checking pod health..."
 
                 sh '''
-                kubectl wait --for=condition=available deployment/node-cicd-deploy \
-                -n frontend --timeout=60s
+                kubectl rollout status deployment/node-cicd-deploy -n frontend --timeout=60s
                 '''
 
             } catch (Exception e) {
