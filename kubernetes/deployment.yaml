@@ -2,41 +2,41 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: node-cicd
-  name: node-cicd
-  namespace: default
+    app: node-cicd-deploy
+  name: node-cicd-deploy
+  namespace: frontend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: node-cicd
+      app: node-cicd-deploy
   strategy:
     rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
+      maxSurge: 1
+      maxUnavailable: 2
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: node-cicd
+        app: node-cicd-deploy
     spec:
       containers:
-      - image: gautamdevgrover/node-cicd-app:12
+      - image: gautamdevgrover/node-cicd-app:56
         imagePullPolicy: IfNotPresent
-        livenessProbe:
+        name: node-cicd-app
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        readinessProbe:
           failureThreshold: 3
           httpGet:
             path: /health
             port: 3000
             scheme: HTTP
-          initialDelaySeconds: 10
-          periodSeconds: 15
+          initialDelaySeconds: 5
+          periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 1
-        name: node-cicd-app
-        ports:
-        - containerPort: 3000
-          protocol: TCP
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File

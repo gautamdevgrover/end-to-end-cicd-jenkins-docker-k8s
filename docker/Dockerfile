@@ -5,7 +5,7 @@ FROM node:18
 WORKDIR /app
 
 # Copy package files
-COPY . .
+COPY app/ .
 
 ENV TZ=Asia/Kolkata
 
