@@ -2,7 +2,7 @@
 
 ## 📌 Project Overview
 
-This project demonstrates a complete **end-to-end CI/CD pipeline** that automates the process of building, testing, and deploying a containerized application using modern DevOps tools.
+This project demonstrates a complete **end-to-end CI/CD pipeline** that automates the process of building, testing, and deploying a containerized Node.js application using modern DevOps tools.
 
 The pipeline ensures that only **tested and verified Docker images** are promoted to deployment, with **automatic rollback** in case of failures.
 
@@ -35,7 +35,7 @@ Code Push → Jenkins Trigger → Build Docker Image → Run Tests → Push Imag
 
 ### 2️⃣ Build Docker Image
 
-* Builds a Docker image using a custom Dockerfile
+* Builds Docker image using custom Dockerfile
 * Tags image with:
 
   * `BUILD_NUMBER`
@@ -45,23 +45,23 @@ Code Push → Jenkins Trigger → Build Docker Image → Run Tests → Push Imag
 
 * Runs a container from the built image
 * Performs **health check validation** using `/health` endpoint
-* Implements:
+* Includes:
 
+  * Initial wait for container startup
   * Retry mechanism
-  * Initial wait for container readiness
 * Pipeline fails if application is unhealthy
 
 ### 4️⃣ Push to Docker Hub
 
 * Authenticates securely using Jenkins credentials
-* Pushes both:
+* Pushes:
 
   * Versioned image
   * Latest image
 
 ### 5️⃣ Kubernetes Deployment
 
-* Updates deployment using new Docker image
+* Updates deployment with new Docker image
 * Monitors rollout status
 * Automatically performs **rollback on failure**
 
@@ -69,31 +69,31 @@ Code Push → Jenkins Trigger → Build Docker Image → Run Tests → Push Imag
 
 * Sends email notifications for:
 
-  * Success
-  * Failure
+  * Success ✅
+  * Failure ❌
 
 ---
 
 ## 🔥 Key Features
 
 * ✅ Build once, deploy everywhere (image reuse)
-* ✅ Health-based automated testing before deployment
-* ✅ Retry mechanism for reliable validation
+* ✅ Health-based automated testing
+* ✅ Retry mechanism for stability
 * ✅ Secure DockerHub authentication
-* ✅ Kubernetes deployment with rollback strategy
-* ✅ Email notifications with build details
+* ✅ Kubernetes deployment with rollback
+* ✅ Email notifications
 
 ---
 
 ## 📦 Docker Image Strategy
 
-* Each build is tagged with a unique version:
+* Versioned image:
 
 ```
 gautamdevgrover/node-cicd-app:<BUILD_NUMBER>
 ```
 
-* Also tagged as:
+* Latest tag:
 
 ```
 gautamdevgrover/node-cicd-app:latest
@@ -101,32 +101,9 @@ gautamdevgrover/node-cicd-app:latest
 
 ---
 
-## 🧠 Design Decisions
-
-* **Health Checks Before Deployment:** Ensures only stable builds are promoted
-* **Retry Logic:** Avoids false failures due to startup delays
-* **Rollback Strategy:** Maintains system stability in production
-* **Single Image Flow:** Eliminates inconsistencies between test and deployment
-
----
-
-## 🚧 Future Improvements
-
-* Add multi-environment support (Dev → Staging → Production)
-* Integrate monitoring tools like Prometheus & Grafana
-* Implement GitOps using ArgoCD
-* Add unit and integration testing
-
----
-
-## 📸 Architecture Overview
+## 📁 Project Structure
 
 ```
-Developer → GitHub → Jenkins → Docker → Kubernetes → Users
-```
----
-
-📁 Project Structure
 node-app
 ├── README.md
 ├── app
@@ -145,96 +122,141 @@ node-app
 │   └── service.yaml
 └── tests
     └── test.js
-📌 Directory Breakdown
-app/ → Node.js application source code
-docker/ → Dockerfile for building container image
-jenkins/ → Jenkins pipeline definition (CI/CD automation)
-kubernetes/ → Deployment & Service manifests
-tests/ → Basic test scripts for application validation
-🧠 Why This Structure?
-Keeps application, infrastructure, and pipeline separated and organized
-Makes the project scalable and easy to maintain
-Follows real-world DevOps project structure
+```
 
 ---
 
-▶️ How to Run This Project
+## 📌 Directory Breakdown
 
-Follow the steps below to set up and run this project on your system.
+* **app/** → Node.js application source code
+* **docker/** → Dockerfile for building container image
+* **jenkins/** → Jenkins pipeline definition
+* **kubernetes/** → Deployment & Service manifests
+* **tests/** → Application test scripts
 
-🔧 Prerequisites
+---
 
-Make sure the following tools are installed:
+## ▶️ How to Run This Project
 
-Git
-Docker
-Jenkins
-Kubernetes (Minikube / Kind / or Cluster)
-kubectl CLI
-📥 1. Clone the Repository
+### 🔧 Prerequisites
+
+Ensure the following tools are installed:
+
+* Git
+* Docker
+* Jenkins
+* Kubernetes (Minikube / Kind / Cluster)
+* kubectl
+
+---
+
+### 📥 1. Clone Repository
+
+```
 git clone https://github.com/gautamdevgrover/Project1.git
 cd Project1
-🐳 2. Build Docker Image (Optional Manual Test)
+```
+
+---
+
+### 🐳 2. Build & Test Docker Image (Optional)
+
+```
 docker build -t node-cicd-app -f docker/Dockerfile .
-
-Run container:
-
 docker run -d -p 3000:3000 node-cicd-app
-
-Test app:
-
 curl http://localhost:3000/health
-⚙️ 3. Setup Jenkins
-Install Jenkins on your system
-Install required plugins:
-Pipeline
-Docker Pipeline
-Email Extension
-Create a new Pipeline Job
-Configure:
-GitHub repo URL
-Branch: main
-Script Path: Jenkinsfile
-🔐 4. Configure Credentials in Jenkins
+```
 
-Add Docker Hub credentials:
+---
 
-Go to: Jenkins → Manage Credentials
-Add:
-Username
-Password
-Use ID: docker-creds
-☸️ 5. Setup Kubernetes
+### ⚙️ 3. Setup Jenkins
 
-Make sure Kubernetes cluster is running.
+* Install Jenkins
 
-Create namespace:
+* Install plugins:
 
+  * Pipeline
+  * Docker Pipeline
+  * Email Extension
+
+* Create Pipeline Job:
+
+  * Git repo: your repo URL
+  * Branch: `main`
+  * Script Path: `jenkins/Jenkinsfile`
+
+---
+
+### 🔐 4. Configure DockerHub Credentials
+
+* Go to Jenkins → Manage Credentials
+* Add Username & Password
+* Credential ID: `docker-creds`
+
+---
+
+### ☸️ 5. Setup Kubernetes
+
+```
 kubectl create namespace frontend
+kubectl apply -f kubernetes/deployment.yaml
+kubectl apply -f kubernetes/service.yaml
+```
 
-Apply deployment (if not already created):
+---
 
-kubectl apply -f k8s/deployment.yaml
-🚀 6. Run Pipeline
-Push code to GitHub
-Jenkins will automatically trigger pipeline
+### 🚀 6. Run Pipeline
 
-OR manually:
+* Push code → triggers pipeline automatically
 
-Click Build Now in Jenkins
-📊 7. Verify Deployment
+OR
+
+* Click **Build Now** in Jenkins
+
+---
+
+### 📊 7. Verify Deployment
+
+```
 kubectl get pods -n frontend
 kubectl get svc -n frontend
-📬 8. Email Notifications
-Configure SMTP in Jenkins
-You will receive email on:
-Success ✅
-Failure ❌
-🧪 Expected Outcome
-Docker image is built and tested
-Image pushed to Docker Hub
-App deployed to Kubernetes
-Rollback happens if deployment fails
+```
+
+---
+
+### 📬 8. Email Notifications
+
+* Configure SMTP in Jenkins
+* Receive email alerts on:
+
+  * Success
+  * Failure
+
+---
+
+## 🧠 Design Decisions
+
+* Health checks ensure only stable builds are deployed
+* Retry logic avoids false failures during startup
+* Rollback mechanism ensures high availability
+* Single image flow prevents environment mismatch
+
+---
+
+## 🚧 Future Improvements
+
+* Multi-environment setup (Dev → Staging → Prod)
+* Monitoring using Prometheus & Grafana
+* GitOps using ArgoCD
+* Advanced testing (unit + integration)
+
+---
+
+## 📸 Architecture Overview
+
+```
+Developer → GitHub → Jenkins → Docker → Kubernetes → Users
+```
 
 ---
 
@@ -245,6 +267,7 @@ DevOps Enthusiast | Cloud & Automation Learner
 
 ---
 
-## ⭐ If you like this project
+## ⭐ Support
 
-Give it a star on GitHub ⭐
+If you found this project helpful, give it a ⭐ on GitHub!
+
