@@ -1,273 +1,222 @@
-# 🚀 End-to-End CI/CD Pipeline with Docker, Jenkins & Kubernetes
+# 🚀 End-to-End CI/CD Pipeline using Jenkins, Docker, Helm & Kubernetes
 
-## 📌 Project Overview
+## 📌 Overview
 
-This project demonstrates a complete **end-to-end CI/CD pipeline** that automates the process of building, testing, and deploying a containerized Node.js application using modern DevOps tools.
+This project demonstrates a **production-style CI/CD pipeline** that automates building, testing, containerization, and deployment of a Node.js application using modern DevOps practices.
 
-The pipeline ensures that only **tested and verified Docker images** are promoted to deployment, with **automatic rollback** in case of failures.
+The pipeline ensures:
 
----
-
-## 🛠️ Tech Stack
-
-* **CI/CD Tool:** Jenkins
-* **Containerization:** Docker
-* **Orchestration:** Kubernetes
-* **Cloud:** AWS EC2
-* **Version Control:** GitHub
-* **Language:** Node.js
+* Automated testing
+* Reliable deployments
+* Deployment validation
+* Automatic rollback on failure
 
 ---
 
-## 🔄 CI/CD Workflow
+## ⚙️ Tech Stack
 
-```
-Code Push → Jenkins Trigger → Build Docker Image → Run Tests → Push Image → Deploy to Kubernetes → Rollback (if failure) → Email Notification
-```
-
----
-
-## ⚙️ Pipeline Stages Explained
-
-### 1️⃣ Code Checkout
-
-* Pulls latest code from GitHub repository
-
-### 2️⃣ Build Docker Image
-
-* Builds Docker image using custom Dockerfile
-* Tags image with:
-
-  * `BUILD_NUMBER`
-  * `latest`
-
-### 3️⃣ Automated Testing
-
-* Runs a container from the built image
-* Performs **health check validation** using `/health` endpoint
-* Includes:
-
-  * Initial wait for container startup
-  * Retry mechanism
-* Pipeline fails if application is unhealthy
-
-### 4️⃣ Push to Docker Hub
-
-* Authenticates securely using Jenkins credentials
-* Pushes:
-
-  * Versioned image
-  * Latest image
-
-### 5️⃣ Kubernetes Deployment
-
-* Updates deployment with new Docker image
-* Monitors rollout status
-* Automatically performs **rollback on failure**
-
-### 6️⃣ Notifications
-
-* Sends email notifications for:
-
-  * Success ✅
-  * Failure ❌
+* CI/CD: Jenkins
+* Containerization: Docker
+* Orchestration: Kubernetes
+* Package Manager: Helm
+* Source Control: GitHub
 
 ---
 
-## 🔥 Key Features
+## 🔄 Pipeline Flow
 
-* ✅ Build once, deploy everywhere (image reuse)
-* ✅ Health-based automated testing
-* ✅ Retry mechanism for stability
-* ✅ Secure DockerHub authentication
-* ✅ Kubernetes deployment with rollback
-* ✅ Email notifications
-
----
-
-## 📦 Docker Image Strategy
-
-* Versioned image:
-
-```
-gautamdevgrover/node-cicd-app:<BUILD_NUMBER>
-```
-
-* Latest tag:
-
-```
-gautamdevgrover/node-cicd-app:latest
+```text
+GitHub → Jenkins → Docker Build → Test → Docker Push → Helm Deploy → Kubernetes
+                                                        ↓
+                                                Rollout Validation
+                                                        ↓
+                                                  Auto Rollback
 ```
 
 ---
 
-## 📁 Project Structure
+## ✨ Key Features
 
+* ✅ End-to-end CI/CD automation
+* ✅ Docker-based testing environment
+* ✅ Image versioning using build number
+* ✅ Secure Docker Hub authentication
+* ✅ Helm-based Kubernetes deployments
+* ✅ Deployment validation using rollout status
+* ✅ Automatic rollback on failure
+* ✅ HTML email notifications
+* ✅ Automatic cleanup of containers
+
+---
+
+## 🧪 Testing Strategy
+
+* Application is built inside a Docker container
+* A temporary container is started for testing
+* Health endpoint (`/health`) is validated
+* Retry logic ensures stability
+* Pipeline fails if the application is unhealthy
+
+---
+
+## 🚀 Deployment Strategy
+
+* Uses Helm for deployment:
+
+```bash
+helm upgrade --install node-app ...
 ```
-node-app
-├── README.md
-├── app
-│   ├── app.js
-│   ├── package-lock.json
-│   ├── package.json
-│   └── public
-│       ├── index.html
-│       └── style.css
-├── docker
-│   └── Dockerfile
-├── jenkins
-│   └── Jenkinsfile
-├── kubernetes
-│   ├── deployment.yaml
-│   └── service.yaml
-└── tests
-    └── test.js
+
+* Atomic deployment ensures safe updates:
+
+```bash
+--atomic --timeout 60s
+```
+
+* Post-deployment validation:
+
+```bash
+kubectl rollout status deployment/node-cicd-deploy
 ```
 
 ---
 
-## 📌 Directory Breakdown
+## 🔁 Rollback Mechanism
 
-* **app/** → Node.js application source code
-* **docker/** → Dockerfile for building container image
-* **jenkins/** → Jenkins pipeline definition
-* **kubernetes/** → Deployment & Service manifests
-* **tests/** → Application test scripts
+This project implements **multi-layer rollback protection**:
 
----
+### 1. Helm Atomic Rollback
 
-## ▶️ How to Run This Project
+* Automatically rolls back if deployment fails during upgrade
 
-### 🔧 Prerequisites
+### 2. Manual Rollback (Fallback)
 
-Ensure the following tools are installed:
+* Triggered via Jenkins pipeline if rollout validation fails
 
-* Git
-* Docker
-* Jenkins
-* Kubernetes (Minikube / Kind / Cluster)
-* kubectl
-
----
-
-### 📥 1. Clone Repository
-
-```
-git clone https://github.com/gautamdevgrover/Project1.git
-cd Project1
+```bash
+helm rollback node-app
 ```
 
 ---
 
-### 🐳 2. Build & Test Docker Image (Optional)
+## 📂 Project Structure
 
-```
-docker build -t node-cicd-app -f docker/Dockerfile .
-docker run -d -p 3000:3000 node-cicd-app
-curl http://localhost:3000/health
+```text
+Project1/
+ ├── app/
+ ├── docker/
+ │    └── Dockerfile
+ ├── kubernetes/
+ │    └── node-app-chart/   # Helm Chart
+ ├── Jenkinsfile
+ └── README.md
 ```
 
 ---
 
-### ⚙️ 3. Setup Jenkins
+## 📧 Notifications
+
+* Email alerts on:
+
+  * ✅ Successful build
+  * ❌ Failed build
+
+Includes:
+
+* Build number
+* Project details
+* Deployment info
+* Direct Jenkins link
+
+---
+
+## 🛠️ How to Run
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/your-username/nodejs-cicd-pipeline-jenkins-k8s.git
+cd nodejs-cicd-pipeline-jenkins-k8s
+```
+
+---
+
+### 2. Setup Jenkins
 
 * Install Jenkins
-
-* Install plugins:
-
-  * Pipeline
-  * Docker Pipeline
-  * Email Extension
-
-* Create Pipeline Job:
-
-  * Git repo: your repo URL
-  * Branch: `main`
-  * Script Path: `jenkins/Jenkinsfile`
+* Configure Docker credentials
+* Configure email (SMTP)
+* Create pipeline job using Jenkinsfile
 
 ---
 
-### 🔐 4. Configure DockerHub Credentials
+### 3. Run Pipeline
 
-* Go to Jenkins → Manage Credentials
-* Add Username & Password
-* Credential ID: `docker-creds`
-
----
-
-### ☸️ 5. Setup Kubernetes
-
-```
-kubectl create namespace frontend
-kubectl apply -f kubernetes/deployment.yaml
-kubectl apply -f kubernetes/service.yaml
-```
+* Push code to GitHub
+* Jenkins automatically triggers pipeline
 
 ---
 
-### 🚀 6. Run Pipeline
+## 📸 Screenshots (Optional)
 
-* Push code → triggers pipeline automatically
+*Add screenshots of:*
 
-OR
-
-* Click **Build Now** in Jenkins
-
----
-
-### 📊 7. Verify Deployment
-
-```
-kubectl get pods -n frontend
-kubectl get svc -n frontend
-```
+* Jenkins pipeline success
+* Docker image push
+* Kubernetes pods
 
 ---
 
-### 📬 8. Email Notifications
+## 🎥 Demo (Optional)
 
-* Configure SMTP in Jenkins
-* Receive email alerts on:
-
-  * Success
-  * Failure
+*Add demo video link*
 
 ---
 
-## 🧠 Design Decisions
+## 🧠 Challenges & Solutions
 
-* Health checks ensure only stable builds are deployed
-* Retry logic avoids false failures during startup
-* Rollback mechanism ensures high availability
-* Single image flow prevents environment mismatch
+### ❌ Challenge: Deployment shows success even when pods fail
 
----
+✔ Solution:
 
-## 🚧 Future Improvements
-
-* Multi-environment setup (Dev → Staging → Prod)
-* Monitoring using Prometheus & Grafana
-* GitOps using ArgoCD
-* Advanced testing (unit + integration)
+* Added `kubectl rollout status` for validation
 
 ---
 
-## 📸 Architecture Overview
+### ❌ Challenge: Helm not detecting image pull failures
 
-```
-Developer → GitHub → Jenkins → Docker → Kubernetes → Users
-```
+✔ Solution:
+
+* Combined Helm deployment with rollout verification
+
+---
+
+### ❌ Challenge: Reliable rollback implementation
+
+✔ Solution:
+
+* Used Helm atomic flag + manual rollback fallback
+
+---
+
+## 📣 Interview Explanation
+
+> This project implements a complete CI/CD pipeline where code changes trigger automated build, test, and deployment processes. Helm is used for Kubernetes deployments with atomic rollback, and rollout validation ensures only successful deployments are promoted.
+
+---
+
+## 🔗 Future Improvements
+
+* Monitoring (Prometheus + Grafana)
+* Logging (ELK stack)
+* Multi-environment setup (dev/prod)
+* Cloud deployment (AWS EKS)
 
 ---
 
 ## 👨‍💻 Author
 
 **Gautam Dev**
-DevOps Enthusiast | Cloud & Automation Learner
+DevOps Engineer 🚀
 
 ---
-
-## ⭐ Support
-
-If you found this project helpful, give it a ⭐ on GitHub!
-
