@@ -80,7 +80,7 @@ pipeline {
                     try {
                         sh '''
                         helm -n frontend upgrade --install node-app kubernetes/node-app-chart --create-namespace \
-                        --set image.tag=$BUILD_NUMBER \
+                        --set image.tag=090 \
                         --timeout 60s
                         '''
                     } catch (Exception e) {
