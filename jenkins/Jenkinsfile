@@ -81,8 +81,7 @@ pipeline {
                         sh '''
                         helm -n frontend upgrade --install node-app kubernetes/node-app-chart --create-namespace \
                         --set image.tag=090 \
-                        --timeout 60s
-                        --atomic
+                        --timeout 60s --atomic
                         '''
                     } catch (Exception e) {
                         echo "Helm deploy failed! Rolling back..."
