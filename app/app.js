@@ -14,7 +14,7 @@ app.get('/api/time', (req, res) => {
 
   res.json({
     time: time,
-    status: "🚀 Deployed via CI/CD Pipeline TESTTESTESTESTEST"
+    status: "🚀 Deployed via CI/CD Pipeline"
   });
 });
 
