@@ -81,7 +81,7 @@ pipeline {
                 sh '''
                 helm -n frontend upgrade --install node-app kubernetes/node-app-chart \
                 --create-namespace \
-                --set image.tag=$BUILD_NUMBER \
+                --set image.tag=wrong \
                 --timeout 60s \
                 --atomic
                 '''
