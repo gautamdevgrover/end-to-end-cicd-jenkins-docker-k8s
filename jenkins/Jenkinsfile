@@ -31,7 +31,8 @@ pipeline {
                 docker rm -f test || true
 
                 docker run -d --name test -p 3001:3000 $DOCKER_IMAGE:$IMAGE_TAG
-
+                echo "Waiting for container to start..."
+                sleep 5
                 success=false
 
                 for i in {1..10}; do
