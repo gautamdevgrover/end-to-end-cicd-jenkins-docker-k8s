@@ -44,7 +44,7 @@ pipeline {
 
                     sh '''
                     echo $PASS | docker login -u $USER --password-stdin
-                    docker push $DOCKER_IMAGE
+                    docker push $DOCKER_IMAGE:$IMAGE_TAG
                     docker logout
                     '''
                 }
