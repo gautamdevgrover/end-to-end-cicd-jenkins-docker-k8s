@@ -4,7 +4,6 @@ metadata:
   labels:
     app: node-cicd-deploy
   name: node-cicd-deploy
-  namespace: frontend
 spec:
   replicas: 2
   selector:
@@ -21,7 +20,7 @@ spec:
         app: node-cicd-deploy
     spec:
       containers:
-      - image: gautamdevgrover/node-cicd-app:56
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: IfNotPresent
         name: node-cicd-app
         ports:

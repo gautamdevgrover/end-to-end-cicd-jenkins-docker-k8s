@@ -4,7 +4,6 @@ metadata:
   labels:
     app: node-cicd-deploy
   name: node-svc
-  namespace: frontend
 spec:
   ports:
   - port: 3000
