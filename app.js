@@ -3,14 +3,26 @@ const app = express();
 
 const PORT = 3000;
 
-app.get('/', (req, res) => {
-  res.send("Last time " + new Date().toString());
+// Serve static files
+app.use(express.static('public'));
+
+// API for time
+app.get('/api/time', (req, res) => {
+  const time = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata"
+  });
+
+  res.json({
+    time: time,
+    status: "🚀 Deployed via CI/CD Pipeline"
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
-app.listen(PORT, () => {
-  console.log(`App running on port ${PORT}`);
-});

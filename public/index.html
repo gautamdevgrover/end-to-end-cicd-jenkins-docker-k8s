@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DevOps CI/CD Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>🚀 CI/CD Demo App</h1>
+
+    <p id="status">Loading...</p>
+    <h2 id="time"></h2>
+
+    <button onclick="loadData()">Refresh</button>
+  </div>
+
+  <script>
+    async function loadData() {
+      const res = await fetch('/api/time');
+      const data = await res.json();
+
+      document.getElementById('time').innerText = data.time;
+      document.getElementById('status').innerText = data.status;
+    }
+
+    loadData();
+  </script>
+
+</body>
+</html>
